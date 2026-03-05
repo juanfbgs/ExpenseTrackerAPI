@@ -2,6 +2,10 @@
 
 .NET 10 Minimal API with JWT authentication
 
+## Demo
+
+https://github.com/user-attachments/assets/b97d97a8-6d14-4256-9aa7-7de9be481220
+
 ## Tech Stack
 
 - Framework: .NET 10
