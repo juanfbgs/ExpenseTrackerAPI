@@ -6,4 +6,5 @@ public record ExpenseResponseDto(
     decimal Amount,
     string Category,
     DateTime CreatedAt,
+    DateTime? UpdatedAt,
     int UserId);

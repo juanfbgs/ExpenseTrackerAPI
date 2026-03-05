@@ -17,6 +17,8 @@ public static class ExpensesEndpoints
 
         group.MapPost("/", ExpensesHandlers.CreateExpense);
 
+        group.MapPut("/{id:int}", ExpensesHandlers.UpdateExpense);
+        
         group.MapDelete("/{id:int}", ExpensesHandlers.DeleteExpense);
     }
 }

@@ -7,6 +7,7 @@ public class Expense
     public decimal Amount { get; set; }
     public string Category { get; set;} = string.Empty;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
     // Foreign Key to User
     public int UserId { get; set; }

@@ -16,7 +16,7 @@ public static class AuthHandlers
     {
         if (await context.Users.AnyAsync(u => u.Username == registerDto.Username))
             return Results.Conflict("Username is already taken.");
-
+        
         var user = new User
         {
             Username = registerDto.Username,

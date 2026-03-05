@@ -13,7 +13,7 @@ public static class ExpensesHandlers
         var userId = GetUserId(principal);
         var expenses = await context.Expenses
             .Where(e => e.UserId == userId)
-            .Select(e => new ExpenseResponseDto(e.Id, e.Description, e.Amount, e.Category, e.CreatedAt, e.UserId))
+            .Select(e => new ExpenseResponseDto(e.Id, e.Description, e.Amount, e.Category, e.CreatedAt, e.UpdatedAt, e.UserId))
             .ToListAsync();
 
         return Results.Ok(expenses);
@@ -26,27 +26,67 @@ public static class ExpensesHandlers
 
         if (expense is null) return Results.NotFound();
 
-        return Results.Ok(new ExpenseResponseDto(expense.Id, expense.Description, expense.Amount, expense.Category, expense.CreatedAt, expense.UserId));
+        return Results.Ok(new ExpenseResponseDto(expense.Id, expense.Description, expense.Amount, expense.Category, expense.CreatedAt, expense.UpdatedAt, expense.UserId));
     }
 
     public static async Task<IResult> CreateExpense(ExpenseCreateDto expenseCreateDto, AppDbContext context, ClaimsPrincipal principal)
     {
         var userId = GetUserId(principal);
-        
+
         var expense = new Expense
         {
             Description = expenseCreateDto.Description,
             Amount = expenseCreateDto.Amount,
             Category = expenseCreateDto.Category,
-            CreatedAt = expenseCreateDto.CreatedAt,
             UserId = userId
         };
 
         context.Expenses.Add(expense);
         await context.SaveChangesAsync();
 
-        var response = new ExpenseResponseDto(expense.Id, expense.Description, expense.Amount, expense.Category, expense.CreatedAt, expense.UserId);
+        var response = new ExpenseResponseDto(
+            expense.Id,
+            expense.Description,
+            expense.Amount,
+            expense.Category,
+            expense.CreatedAt,
+            null,
+            expense.UserId
+        );
+
         return Results.CreatedAtRoute("GetExpenseById", new { id = expense.Id }, response);
+    }
+
+    public static async Task<IResult> UpdateExpense(int id, ExpenseUpdateDto expenseUpdateDto, AppDbContext context, ClaimsPrincipal principal)
+    {
+        var userId = GetUserId(principal);
+
+        var existingExpense = await context.Expenses
+            .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
+
+        if (existingExpense is null)
+        {
+            throw new Exception("Expense not found");
+        }
+
+
+        existingExpense.Description = expenseUpdateDto.Description ?? existingExpense.Description;
+        existingExpense.Amount = expenseUpdateDto.Amount ?? existingExpense.Amount;
+        existingExpense.Category = expenseUpdateDto.Category ?? existingExpense.Category;
+        existingExpense.UpdatedAt = DateTime.UtcNow;
+
+        await context.SaveChangesAsync();
+
+        var response = new ExpenseResponseDto(
+        existingExpense.Id,
+        existingExpense.Description,
+        existingExpense.Amount,
+        existingExpense.Category,
+        existingExpense.CreatedAt,
+        existingExpense.UpdatedAt,
+        existingExpense.UserId);
+
+        return Results.Ok(response);
     }
 
     public static async Task<IResult> DeleteExpense(int id, AppDbContext context, ClaimsPrincipal principal)

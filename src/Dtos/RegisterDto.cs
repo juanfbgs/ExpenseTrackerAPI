@@ -1,7 +1,9 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ExpenseTrackerAPI.Dtos;
 
 public record RegisterDto(
-    string Username, 
-    string Password, 
-    string Email
+   [Required][MinLength(2), MaxLength(50)] string Username,
+   [Required][MinLength(6)] string Password,
+   [Required][EmailAddress] string Email
 );

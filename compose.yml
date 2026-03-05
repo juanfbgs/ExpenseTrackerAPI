@@ -1,0 +1,14 @@
+services:
+  db:
+    image: postgres:alpine
+    environment:
+      POSTGRES_USER: expensetrackeruser
+      POSTGRES_PASSWORD: mySecretPassword1
+      POSTGRES_DB: expensetrackerdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdataexpense:/var/lib/postgresql/data
+
+volumes:
+  pgdataexpense:
